@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store'
-const Memrber = () => import('@/components/memrber/Index')
+const Member = () => import('@/components/member/Index')
 const Index = () => import('@/components/index/index')
 const Classification = () => import('@/components/classification/index')
 const Cart = () => import('@/components/cart/index')
 const Detail = () => import('@/components/detail/index')
 const Container = () => import('@/container')
+const ConfirmOrder = () => import('@/components/confirmOrder/index')
 Vue.use(Router)
 
 const router = new Router({
@@ -23,14 +24,15 @@ const router = new Router({
         {
           path: 'member',
           name: '会员',
-          component: Memrber
+          component: Member
         },
         {
           path: 'classification',
           name: '分类',
           component: Classification
         },
-        {path: 'cart', name: '购物车', component: Cart}
+        {path: 'cart', name: '购物车', component: Cart},
+        {path: 'confirmOrder', name: '确认订单', component: ConfirmOrder}
       ]
     },
 
