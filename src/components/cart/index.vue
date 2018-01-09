@@ -86,6 +86,19 @@ export default class Cart extends Vue {
 </script>
 <style lang="less">
     .cart {
+        .vux-number-selector-sub, .vux-number-selector-plus {
+            padding: 3px !important;
+            margin-right: 0 !important;
+        }
+        .vux-number-input {
+            font-size: 14px;
+            width: 30px !important;
+        }
+    }
+</style>
+
+<style lang="less" scoped>
+    .cart {
         padding-top: 0.44rem;
         padding-bottom: 1rem;
         overflow: hidden;
@@ -115,13 +128,6 @@ export default class Cart extends Vue {
         }
         .bottom-l {
             color: #C61A2A;
-        }
-        .vux-number-selector-sub, .vux-number-selector-plus {
-            padding: 3px !important;
-        }
-        .vux-number-input {
-            font-size: 14px;
-            width: 30px !important;
         }
         .con-mid-b {
             width: 100%;
@@ -160,7 +166,7 @@ export default class Cart extends Vue {
         }
         .con-mid {
             border-bottom: 1px solid #D9D9D9;
-            height: 1.3rem;
+            height: 1rem;
             padding: 0.15rem 0.14rem;
             display: flex;
             justify-content: space-between;

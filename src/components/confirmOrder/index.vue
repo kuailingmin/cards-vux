@@ -118,7 +118,7 @@ export default class ConfirmOrder extends Vue {
       border: none;
     }
     .con-mid {
-      height: 0.9rem;
+      height: 0.6rem;
       border-bottom: 1px solid #D9D9D9;
       padding: 0.15rem;
       display: flex;
