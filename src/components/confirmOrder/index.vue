@@ -1,97 +1,84 @@
 <template>
   <div class="confirm-order">
     <group>
-      <cell title="请选择收货地址" is-link @click.native="handleSelectAddress"></cell>
+      <cell v-if="JSON.stringify(confirmOrderInitData.address) !== '{}'" is-link link="/address">
+        <div class="address-t"><span class="address-name">{{confirmOrderInitData.address.name}}</span>&nbsp;<span>{{confirmOrderInitData.address.phone}}</span></div>
+        <div class="address-b">{{confirmOrderInitData.address.province+' '+confirmOrderInitData.address.city+' '+confirmOrderInitData.address.district+' '+confirmOrderInitData.address.town+confirmOrderInitData.address.address}}</div>
+      </cell>
+      <cell class="no-address" v-else title="请选择收货地址" is-link link="/address"></cell>
     </group>
-    <div class="order-con" v-for="(item, index) in orderList" :key="index">
-      <div class="con-top">共{{item.list.length}}件商品<span>（{{item.title}}）</span></div>
-      <div class="con-mid" v-for="(subItem, i) in item.list" :key="i">
+    <div class="order-con" v-for="(item, index) in confirmOrderInitData.list" :key="index">
+      <div class="con-top">共{{item.goods.length}}件商品<span>（{{item.title}}）</span></div>
+      <div class="con-mid" v-for="(subItem, i) in item.goods" :key="i">
         <div class="my-img"><img class="img" :src="subItem.pic" alt=""></div>
-        <div class="con-mid-m">{{subItem.desc}}</div>
+        <div class="con-mid-m">{{subItem.name}}</div>
         <div class="con-mid-r">
-          <span class="my-color-t">￥{{subItem.price}}</span>
+          <span class="my-color-t">￥{{subItem.member_price}}</span>
           <span class="my-color-b">x{{subItem.num}}</span>
         </div>
       </div>
       <div class="con-foot">
         <span class="con-total">商品合计</span>
-        <span class="my-color-t">￥{{item.total}}</span>
+        <span class="my-color-t">￥{{item.total_price || '0'}}</span>
       </div>
       <div class="con-foot">
         <span class="con-total">运费</span>
-        <span class="my-color-t">￥{{item.freight}}</span>
+        <span class="my-color-t">￥{{confirmOrderInitData.freight}}</span>
       </div>
     </div>
     <div class="con-foot foot-money">
       <span class="con-total">账户余额</span>
-      <span v-show="isCreditEnough" class="my-color-t">￥{{credit}}</span>
-      <span v-show="!isCreditEnough" class="my-color-t">￥{{credit}}<span class="con-total">（余额不足）</span></span>
+      <span v-if="isCreditEnough" class="my-color-t">￥{{confirmOrderInitData.balance}}</span>
+      <span v-else class="my-color-t">￥{{confirmOrderInitData.balance}}<span class="con-total">（余额不足）</span></span>
     </div>
     <div class="confirm-foot">
-      <span class="pay-price">合计：￥{{206.00}}</span>
-      <span class="pay-btn" @click="handlePayBtn(isCreditEnough)">{{isCreditEnough?'去付款':'去充值'}}</span>
+      <span class="pay-price">合计：￥{{confirmOrderInitData.total_price}}</span>
+      <span class="pay-btn" @click="handlePayBtn">{{isCreditEnough?'去付款':'去充值'}}</span>
     </div>
     <div>
-      <confirm v-model="show" title="确认支付" @on-cancel="show===false" @on-confirm="onConfirm">
+      <confirm v-model="isConfirmPay" title="确认支付" @on-cancel="isConfirmPay===false" @on-confirm="onConfirm">
         <p style="text-align:center;">本次消费将从账户余额中扣除</p>
       </confirm>
     </div>
   </div>
 </template>
 <script>
-import { Cell, Group, Confirm } from 'vux';
+import { Cell, Group, Confirm, Toast } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
+import {State, namespace} from 'vuex-class';
+const ConfirmOderState = namespace('confirmOrder', State);
 @Component({
   components: {
     Cell,
     Group,
-    Confirm
+    Confirm,
+    Toast
   }
 })
 export default class ConfirmOrder extends Vue {
-  show = false
-  isCreditEnough = false
-  credit = '9999.00'
-  orderList = [
-    {
-      title: '京东自营',
-      total: '1000.00',
-      freight: '6.00',
-      list: [
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'},
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'},
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'}
-      ]
-    },
-    {
-      title: '苏宁易购',
-      total: '1000.00',
-      freight: '6.00',
-      list: [
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'}
-      ]
-    },
-    {
-      title: '淘宝商城',
-      total: '1000.00',
-      freight: '6.00',
-      list: [
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'},
-        {pic: '/static/img/card1.dd4d063.png', desc: '科海客户回馈卡(黑金) 适用于科海商城 官方卡 100元面值卡', price: '100.00', num: '2'}
-      ]
-    }
-  ]
-  handleSelectAddress () {
-    console.log('sdf');
-  }
+  @ConfirmOderState confirmOrderInitData
+  @ConfirmOderState isCreditEnough
+  @ConfirmOderState ids
+  isConfirmPay = false
   onConfirm () {
-    this.$router.push({
-      path: 'orderPaySuccess'
-    });
+    const params = {
+      'ids': this.ids,
+      'address_id': this.confirmOrderInitData.address.id
+    };
+    this.isConfirmOrder(params).then(msg => {
+      if (!msg) {
+        this.$router.push({
+          path: 'orderPaySuccess'
+        });
+      } else {
+        this.isConfirmPay = false;
+        this.$vux.toast.text(msg, 'middle');
+      }
+    }).catch(error => console.log(error));
   }
-  handlePayBtn (isCreditEnough) {
-    if (isCreditEnough) {
-      this.show = true;
+  handlePayBtn () {
+    if (this.isCreditEnough) {
+      this.isConfirmPay = true;
     } else {
       this.$router.push({
         path: 'recharge'
@@ -105,6 +92,33 @@ export default class ConfirmOrder extends Vue {
     padding-bottom: 0.15rem;
     font-size: 0.14rem;
     overflow: hidden;
+    .no-address .vux-cell-primary {
+      flex: initial;
+      width: 100%;
+    }
+    .weui-cells {
+      margin: 0;
+    }
+    .weui-cell_access .weui-cell__ft {
+      width: 100%;
+    }
+    .address-b {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+    .address-name {
+      font-weight: bolder;
+    }
+    .address-t, .address-b {
+      width: 100%;
+      font-size: 0.16rem;
+      color: #303030;
+      justify-content: flex-start;
+      align-items: center;
+      text-align: left;
+    }
     .weui-dialog__btn_primary {
       color: #ffffff;
       background: #B79E74;
@@ -163,10 +177,15 @@ export default class ConfirmOrder extends Vue {
     }
     .con-mid-m {
       height: 100%;
-      display: flex;
       align-items: flex-start;
       justify-content: flex-start;
       padding: 0 0.15rem;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      line-height: 0.2rem;
+      text-align: left;
     }
     .my-color-t {
       font-size: 0.14rem;

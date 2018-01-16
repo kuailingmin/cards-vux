@@ -6,14 +6,14 @@
     <div class="recharge-1" v-show="active===0">
       <div class="r-top">充值金额</div>
       <group>
-        <x-input title="￥" v-model="rechargeVal" @on-blur="rechargeValOnBlur"></x-input>
+        <x-input title="￥" onkeypress="return event.keyCode>=48&&event.keyCode<=57 || event.keyCode==46" ng-pattern="/[^a-zA-Z]/" v-model="rechargeVal" @on-blur="rechargeValOnBlur"></x-input>
       </group>
       <div class="r-desc">
         <span class="desc-l">注意：大额支付建议使用转账汇款</span>
         <span class="desc-r" @click="handleRechargeDetail">充值记录</span>
       </div>
       <div class="r-foot">
-        <x-button class="r-foot-btn" link="/rechargeResults">微信支付</x-button>
+        <x-button class="r-foot-btn" @click.native="handleToPayLink">微信支付</x-button>
       </div>
     </div>
     <div class="recharge-2" v-show="active===1">
@@ -66,9 +66,13 @@
   </div>
 </template>
 <script>
-import { XButton, Tab, TabItem, XInput, Group } from 'vux';
+import { XButton, Tab, TabItem, XInput, Group, Toast } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
 import Uploader from 'vux-uploader';
+import {State, Action, Mutation, namespace} from 'vuex-class';
+const rechargeState = namespace('recharge', State);
+const rechargeAction = namespace('recharge', Action);
+const rechargeMutation = namespace('recharge', Mutation);
 @Component({
   components: {
     XButton,
@@ -76,10 +80,14 @@ import Uploader from 'vux-uploader';
     TabItem,
     XInput,
     Group,
-    Uploader
+    Uploader,
+    Toast
   }
 })
 export default class OrderPaySuccess extends Vue {
+  @rechargeState payLink
+  @rechargeAction init
+  @rechargeMutation getLink
   rechargeVal = '';
   remitVal = '';
   active = 0;
@@ -96,7 +104,24 @@ export default class OrderPaySuccess extends Vue {
   onItemClick (index) {
     this.active = index;
   }
-  rechargeValOnBlur () {}
+  handleToPayLink () {
+    const params = {
+      'balance': this.rechargeVal
+    };
+    this.init(params).then(msg => {
+      if (!msg) {
+        window.location.href = this.payLink;
+        // this.$router.push({
+        //   path: '/rechargeResults'
+        // });
+      } else {
+        this.$vux.toast.text(msg, 'middle');
+      }
+    }).catch(error => console.log(error));
+  }
+  rechargeValOnBlur () {
+    this.rechargeVal = parseFloat(this.rechargeVal).toFixed(2);
+  }
   remitValOnBlur () {}
   previewMethod () {}
   addImageMethod () {}

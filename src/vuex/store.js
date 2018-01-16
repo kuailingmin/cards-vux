@@ -8,6 +8,8 @@ import help from './modules/help';
 import order from './modules/order';
 import address from './modules/address';
 import cart from './modules/cart';
+import confirmOrder from './modules/confirmOrder';
+import recharge from './modules/recharge';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -19,6 +21,8 @@ export default new Vuex.Store({
     help,
     order,
     cart,
-    address
+    address,
+    confirmOrder,
+    recharge
   }
 });

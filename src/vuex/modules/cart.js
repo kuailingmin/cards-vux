@@ -9,28 +9,28 @@ const actions = {
     if (code === '00000') {
       commit('getInitData', result);
     } else {
-      return new Error(msg);
+      return msg;
     }
   },
   async addReduce ({commit, rootState}, {num, shopId}) {
     const { status: {code, msg} } = await axios.post('/cart/add', qs.stringify({'shop_id': shopId, 'num': num}));
     if (code === '00000') {
     } else {
-      return new Error(msg);
+      return msg;
     }
   },
   async isSelected ({commit, rootState}, params) {
     const { status: {code, msg} } = await axios.post('/cart/selected', qs.stringify({'ids': params.ids, 'is_selected': params.is_selected}));
     if (code === '00000') {
     } else {
-      return new Error(msg);
+      return msg;
     }
   },
   async deleteList ({commit, rootState}, params) {
     const { status: {code, msg} } = await axios.post('/cart/delete', qs.stringify({'ids': params.ids}));
     if (code === '00000') {
     } else {
-      return new Error(msg);
+      return msg;
     }
   }
 };
