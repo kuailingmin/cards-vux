@@ -10,16 +10,16 @@
   </div>
 </template>
 <script>
-  import { XButton } from 'vux';
+import { XButton } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
 @Component({
-    components: {
-      XButton
-    }
-  })
-  export default class submitSuccess extends Vue {
-
+  components: {
+    XButton
   }
+})
+export default class submitSuccess extends Vue {
+
+}
 </script>
 <style lang="less">
   .submit-success {

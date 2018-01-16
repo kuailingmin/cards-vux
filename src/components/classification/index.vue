@@ -117,7 +117,7 @@ export default class Classification extends Vue {
       }
     );
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .classification{
