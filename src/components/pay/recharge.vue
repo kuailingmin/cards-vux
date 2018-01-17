@@ -6,7 +6,7 @@
     <div class="recharge-1" v-show="active===0">
       <div class="r-top">充值金额</div>
       <group>
-        <x-input title="￥" onkeypress="return event.keyCode>=48&&event.keyCode<=57 || event.keyCode==46" ng-pattern="/[^a-zA-Z]/" v-model="rechargeVal" @on-blur="rechargeValOnBlur"></x-input>
+        <x-input title="￥" v-model="rechargeVal" @on-blur="rechargeValOnBlur"></x-input>
       </group>
       <div class="r-desc">
         <span class="desc-l">注意：大额支付建议使用转账汇款</span>
@@ -45,24 +45,25 @@
       </div>
       <div class="upload-img">
         <uploader
-          :max="varmax"
+          :max="1"
           :images="images"
-          :handle-click="true"
           :show-header="false"
           :readonly="false"
-          :upload-url="uploadUrl"
-          :params="params"
+          upload-url="http://cardshopapi.koudaiqifu.cn/site/upload"
           size="small"
           :handleClick="false"
-          @preview="previewMethod"
-          @add-image="addImageMethod"
-          @remove-image="removeImageMethod">
+          @preview="previewMethod">
         </uploader>
       </div>
       <div class="r-foot">
-        <x-button class="r-foot-btn" link="/submitSuccess">提交</x-button>
+        <x-button class="r-foot-btn" @click.native="handleSubmit">提交</x-button>
       </div>
     </div>
+    <transition name="bounce">
+      <div class="img-enlarge" v-show="imgEnLarge" @click="handleImgEnlarge">
+        <img class="img" :src="images.length>0?images[0].url:''" alt="">
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -87,15 +88,42 @@ const rechargeMutation = namespace('recharge', Mutation);
 export default class OrderPaySuccess extends Vue {
   @rechargeState payLink
   @rechargeAction init
+  @rechargeAction initRemit
   @rechargeMutation getLink
   rechargeVal = '';
+  flag = false
+  flag1 = false
   remitVal = '';
   active = 0;
-  varmax = 1;
   images = [];
-  uploadUrl = 'http://cardshopapi.koudaiqifu.cn/site/upload';
-  params = {};
+  imgEnLarge = false
   tabList = [{ title: '在线支付' }, { title: '转账汇款' }];
+  handleImgEnlarge () {
+    this.imgEnLarge = false;
+  }
+  handleSubmit () {
+    if (this.flag1) {
+      if (this.images.length > 0) {
+        const params = {
+          'balance': this.remitVal,
+          'remit_paper': this.images[0].file_hash || ''
+        };
+        this.initRemit(params).then(msg => {
+          if (!msg) {
+            this.$router.push({
+              path: '/submitSuccess'
+            });
+          } else {
+            this.$vux.toast.text(msg, 'middle');
+          }
+        }).catch(error => console.log(error));
+      } else {
+        this.$vux.toast.text('请上传汇款清单', 'middle');
+      }
+    } else {
+      this.$vux.toast.text('请输入充值金额', 'middle');
+    }
+  }
   handleRechargeDetail () {
     this.$router.push({
       path: '/rechargeDetailed'
@@ -105,33 +133,81 @@ export default class OrderPaySuccess extends Vue {
     this.active = index;
   }
   handleToPayLink () {
-    const params = {
-      'balance': this.rechargeVal
-    };
-    this.init(params).then(msg => {
-      if (!msg) {
-        window.location.href = this.payLink;
-        // this.$router.push({
-        //   path: '/rechargeResults'
-        // });
-      } else {
-        this.$vux.toast.text(msg, 'middle');
-      }
-    }).catch(error => console.log(error));
+    if (this.flag) {
+      const params = {
+        'balance': this.rechargeVal
+      };
+      this.init(params).then(msg => {
+        if (!msg) {
+          window.location.href = this.payLink;
+        } else {
+          this.$vux.toast.text(msg, 'middle');
+        }
+      }).catch(error => console.log(error));
+    } else {
+      this.$vux.toast.text('请输入充值金额', 'middle');
+    }
   }
   rechargeValOnBlur () {
-    this.rechargeVal = parseFloat(this.rechargeVal).toFixed(2);
+    if (/^\d+(\.\d+)?$/.test(this.rechargeVal)) {
+      this.rechargeVal = parseFloat(this.rechargeVal).toFixed(2);
+      this.flag = true;
+    } else {
+      this.flag = false;
+      this.rechargeVal = '';
+      this.$vux.toast.text('请输入充值金额', 'middle');
+    }
   }
-  remitValOnBlur () {}
-  previewMethod () {}
-  addImageMethod () {}
-  removeImageMethod () {}
+  remitValOnBlur () {
+    if (/^\d+(\.\d+)?$/.test(this.remitVal)) {
+      this.remitVal = parseFloat(this.remitVal).toFixed(2);
+      this.flag1 = true;
+    } else {
+      this.flag1 = false;
+      this.remitVal = '';
+      this.$vux.toast.text('请输入充值金额', 'middle');
+    }
+  }
+  previewMethod () {
+    this.imgEnLarge = true;
+  }
 }
 </script>
 <style lang="less">
 .recharge {
   font-size: 0.14rem;
   overflow: hidden;
+  .bounce-enter-active {
+    animation: bounce-in .3s;
+  }
+  .bounce-leave-active {
+    animation: bounce-in .3s reverse;
+  }
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .img-enlarge {
+    z-index: 99999;
+    position: fixed;
+    background: #000000;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .img {
+    border: none;
+    width: 100%;
+    height: 50%;
+  }
   .foot-img {
     width: 0.2rem;
     height: 0.17rem;

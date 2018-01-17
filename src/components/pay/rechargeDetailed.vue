@@ -1,71 +1,114 @@
 <template>
   <div class="recharge-detailed">
-    <div v-for="(item, index) in detailList" :key="index">
-      <div class="r-d-top">{{item.month}}<span class="r-d-num">（{{item.list.length}}）</span></div>
-      <group v-for="(subItem, i) in item.list" :key="i" @click.native="handleRechargeDetail(subItem)">
+    <!-- <div v-for="(item, index) in detailList" :key="index"> -->
+      <!-- <div class="r-d-top">记录条数<span class="r-d-num">（{{rechargeRecords.list.length}}）</span></div> -->
+      <!-- <group v-for="(subItem, i) in rechargeRecords.list" :key="i" @click.native="handleRechargeDetail(subItem)">
         <cell class="r-d-g" is-link>
           <div class="r-d-con1">
             <span class="con1-desc">充值金额</span>
-            <span class="con1-desc">+￥{{subItem.price}}</span>
+            <span class="con1-desc">+￥{{subItem.income}}</span>
           </div>
           <div class="r-d-con1">
-            <span class="con2--time">{{subItem.time}}</span>
-            <span class="con2-status">{{subItem.status}}</span>
+            <span class="con2-time">{{subItem.create_time}}</span>
+            <span class="con2-status">{{subItem.title}}</span>
           </div>
         </cell>
-      </group>
-    </div>
+      </group> -->
+    <!-- </div> -->
+    <scroller lock-x @on-scroll-bottom="onScrollBottom" ref="scrollerBottom" :scroll-bottom-offst="200" style="overflow:initial">
+      <div>
+        <group v-for="(item, i) in list" :key="i" @click.native="handleRechargeDetail(item)">
+          <cell class="r-d-g" is-link>
+            <p class="r-d-con1">
+              <span class="con1-desc">充值金额</span>
+              <span class="con1-desc">+￥{{item.income}}</span>
+            </p>
+            <p class="r-d-con1">
+              <span class="con2--time">{{item.create_time}}</span>
+              <span class="con2-status">{{item.title}}</span>
+            </p>
+          </cell>
+        </group>
+        <load-more v-show="onFetching" tip="loading"></load-more>
+      </div>
+    </scroller>
   </div>
 </template>
 <script>
-import { Group, Cell } from 'vux';
+import { Group, Cell, Toast, Scroller, LoadMore } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
+import {State, Action, Mutation, namespace} from 'vuex-class';
+const rechargeState = namespace('recharge', State);
+const rechargeAction = namespace('recharge', Action);
+const rechargeMutation = namespace('recharge', Mutation);
 @Component({
   components: {
     Group,
-    Cell
+    Cell,
+    Toast,
+    Scroller,
+    LoadMore
   }
 })
 export default class rechargeDetailed extends Vue {
-    detailList = [
-      {
-        month: '本月',
-        list: [
-          {price: '1200.00', time: '2017-2-20 15:07:29', status: '汇款成功'},
-          {price: '1200.00', time: '2017-2-20 15:07:29', status: '汇款待确认'},
-          {price: '1200.00', time: '2017-2-20 15:07:29', status: '支付失败'},
-          {price: '1200.00', time: '2017-2-20 15:07:29', status: '汇款成功'}
-        ]
-      },
-      {
-        month: '3月',
-        list: [
-          {price: '1010.00', time: '2017-2-20 15:07:29', status: '汇款待确认'},
-          {price: '1010.00', time: '2017-2-20 15:07:29', status: '支付失败'},
-          {price: '1010.00', time: '2017-2-20 15:07:29', status: '汇款成功'}
-        ]
-      },
-      {
-        month: '12月',
-        list: [
-          {price: '3300.00', time: '2017-2-20 15:07:29', status: '支付失败'},
-          {price: '3300.00', time: '2017-2-20 15:07:29', status: '汇款待确认'},
-          {price: '3300.00', time: '2017-2-20 15:07:29', status: '支付失败'}
-        ]
+  @rechargeState rechargeRecords
+  @rechargeAction getRechargeRecords
+  @rechargeMutation initGetRechargeRecords
+  list = []
+  isLoading = true
+  onFetching = false
+  currentPage = 1
+  onScrollBottom () {
+    if (this.onFetching) {
+      // do nothing
+    } else {
+      if (this.isLoading) {
+        this.onFetching = true;
+        setTimeout(() => {
+          this.currentPage++;
+          this.getInitData();
+          this.$nextTick(() => {
+            this.$refs.scrollerBottom.reset();
+          });
+          this.onFetching = false;
+        }, 2000);
       }
-    ]
-    handleRechargeDetail (item) {
-      console.log('item', item);
-      this.$router.push({
-        path: '/rechargeDetails'
-      });
     }
+  }
+  created () {
+    this.getInitData();
+  }
+  getInitData () {
+    const params = {
+      'page': this.currentPage
+    };
+    this.getRechargeRecords(params).then(msg => {
+      if (msg) {
+        this.$vux.toast.text(msg, 'middle');
+      } else {
+        if (this.rechargeRecords.list.length > 0) {
+          this.list = this.list.concat(this.rechargeRecords.list);
+        } else {
+          this.isLoading = false;
+          this.$vux.toast.text('暂无更多数据', 'middle');
+        }
+      }
+    });
+  }
+  handleRechargeDetail (item) {
+    console.log('item', item);
+    this.$router.push({
+      path: '/rechargeDetails'
+    });
+  }
 }
 </script>
 <style lang="less">
   .recharge-detailed {
     font-size: 0.14rem;
-    overflow: hidden;
+    .xs-container {
+      padding-bottom: 0.8rem;
+    }
     .weui-cells:before {
       border: none !important;
     }

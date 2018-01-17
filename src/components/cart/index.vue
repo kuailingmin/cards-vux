@@ -61,7 +61,7 @@ export default class Cart extends Vue {
     isEdit = false
     handleInputChange (num, id) {
       const params = {
-        'shopId': id,
+        'shop_id': id,
         'num': num
       };
       this.addReduce(params).then(msg => {
@@ -200,7 +200,7 @@ export default class Cart extends Vue {
         item.num++;
       }
       const params = {
-        'shopId': item.shop_id,
+        'shop_id': item.shop_id,
         'num': item.num
       };
       this.addReduce(params).then(msg => {
@@ -221,35 +221,43 @@ export default class Cart extends Vue {
         });
       });
       if (isEdit) {
-        const params = {
-          'ids': ids.join(',')
-        };
-        this.deleteList(params).then(msg => {
-          if (!msg) {
-            this.init();
-          } else {
-            this.$vux.toast.text(msg, 'middle');
-          }
-        }).catch(error => console.log(error));
-      } else {
-        this.$store.commit('confirmOrder/getIds', ids.join(','));
-        const params = {
-          'ids': ids.join(',')
-        };
-        this.confirmOrderInit(params).then(msg => {
-          if (!msg) {
-            if (parseFloat(this.confirmOrderInitData.balance) >= parseFloat(this.confirmOrderInitData.total_price)) {
-              this.$store.commit('confirmOrder/getIsCreditEnough', true);
+        if (ids.length > 0) {
+          const params = {
+            'ids': ids.join(',')
+          };
+          this.deleteList(params).then(msg => {
+            if (!msg) {
+              this.init();
             } else {
-              this.$store.commit('confirmOrder/getIsCreditEnough', false);
+              this.$vux.toast.text(msg, 'middle');
             }
-            this.$router.push({
-              path: '/confirmOrder'
-            });
-          } else {
-            this.$vux.toast.text(msg, 'middle');
-          }
-        }).catch(error => console.log(error));
+          }).catch(error => console.log(error));
+        } else {
+          this.$vux.toast.text('您还没有勾选宝贝哦~', 'middle');
+        }
+      } else {
+        if (ids.length > 0) {
+          this.$store.commit('confirmOrder/getIds', ids.join(','));
+          const params = {
+            'ids': ids.join(',')
+          };
+          this.confirmOrderInit(params).then(msg => {
+            if (!msg) {
+              if (parseFloat(this.confirmOrderInitData.balance) >= parseFloat(this.confirmOrderInitData.total_price)) {
+                this.$store.commit('confirmOrder/getIsCreditEnough', true);
+              } else {
+                this.$store.commit('confirmOrder/getIsCreditEnough', false);
+              }
+              this.$router.push({
+                path: '/confirmOrder'
+              });
+            } else {
+              this.$vux.toast.text(msg, 'middle');
+            }
+          }).catch(error => console.log(error));
+        } else {
+          this.$vux.toast.text('您还没有勾选宝贝哦~', 'middle');
+        }
       }
     }
     created () {

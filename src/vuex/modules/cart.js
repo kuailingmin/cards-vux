@@ -12,19 +12,22 @@ const actions = {
       return msg;
     }
   },
-  async addReduce ({commit, rootState}, {num, shopId}) {
-    const { status: {msg} } = await axios.post('/cart/add', qs.stringify({'shop_id': shopId, 'num': num}));
-    return msg;
+  async addReduce ({commit, rootState}, params) {
+    const { status: {code, msg} } = await axios.post('/cart/add', qs.stringify(params));
+    if (code === '00000') {
+    } else {
+      return msg;
+    }
   },
   async isSelected ({commit, rootState}, params) {
-    const { status: {code, msg} } = await axios.post('/cart/selected', qs.stringify({'ids': params.ids, 'is_selected': params.is_selected}));
+    const { status: {code, msg} } = await axios.post('/cart/selected', qs.stringify(params));
     if (code === '00000') {
     } else {
       return msg;
     }
   },
   async deleteList ({commit, rootState}, params) {
-    const { status: {code, msg} } = await axios.post('/cart/delete', qs.stringify({'ids': params.ids}));
+    const { status: {code, msg} } = await axios.post('/cart/delete', qs.stringify(params));
     if (code === '00000') {
     } else {
       return msg;

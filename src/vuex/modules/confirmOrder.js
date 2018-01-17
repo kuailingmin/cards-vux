@@ -8,7 +8,7 @@ const state = {
 };
 const actions = {
   async confirmOrderInit ({commit, rootState}, params) {
-    const { result, status: {code, msg} } = await axios.post('/order/preorder', qs.stringify({'ids': params.ids}));
+    const { result, status: {code, msg} } = await axios.post('/order/preorder', qs.stringify(params));
     if (code === '00000') {
       commit('confirmOrderGetInitData', result);
     } else {
@@ -16,7 +16,7 @@ const actions = {
     }
   },
   async isConfirmOrder ({commit, rootState}, params) {
-    const { result, status: {code, msg} } = await axios.post('/order/pay', qs.stringify({'ids': params.ids, 'address_id': params.address_id}));
+    const { result, status: {code, msg} } = await axios.post('/order/pay', qs.stringify(params));
     if (code === '00000') {
       commit('getOrderId', result.order_sn);
     } else {

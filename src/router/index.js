@@ -20,7 +20,7 @@ const OrderDetail = () => import('@/components/order/detail');
 const Delivery = () => import('@/components/order/delivery');
 const Money = () => import('@/components/member/money');
 const Login = () => import('@/components/member/login');
-const Register = () => import('@/components/member/register');
+// const Register = () => import('@/components/member/register');
 const Intention = () => import('@/components/intention/index');
 const IntentionDetail = () => import('@/components/intention/detail');
 const IntentionSubmit = () => import('@/components/intention/submit');
@@ -70,8 +70,8 @@ const router = new Router({
     {path: '/address', name: '地址管理', component: Address},
     {path: '/address/add', name: '添加新地址', component: AddAddress},
     {path: '/address/edit/:id', name: '编辑地址', component: AddAddress},
-    {path: '/login', name: '登录', component: Login},
-    {path: '/register', name: '注册', component: Register}
+    {path: '/login', name: '登录', component: Login}
+    // {path: '/register', name: '注册', component: Register}
   ],
   mode: 'hash',
   scrollBehavior (to, from, savedPosition) {
