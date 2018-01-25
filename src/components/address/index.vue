@@ -1,5 +1,5 @@
 <template>
-    <div class="address">
+    <div class="address-index">
         <group v-for="item of list" :key="item.id">
             <cell>
                 <p class="text lg" slot="title"><span class="bold">{{item.name}}</span>&nbsp;{{item.phone}}</p>
@@ -23,7 +23,14 @@
     </div>
 </template>
 <script>
-import { Group, Cell, CheckIcon, Confirm, TransferDomDirective as TransferDom, XButton } from 'vux';
+import {
+  Group,
+  Cell,
+  CheckIcon,
+  Confirm,
+  TransferDomDirective as TransferDom,
+  XButton
+} from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
 import { State, Action, namespace } from 'vuex-class';
 
@@ -37,39 +44,46 @@ const AddressAction = namespace('address', Action);
   components: { Group, Cell, CheckIcon, Confirm, XButton }
 })
 export default class Address extends Vue {
-    show=false
-    clickId=''
+  show = false;
+  clickId = '';
 
-    @AddressState list
+  @AddressState list;
 
-    @AddressAction remove
-    @AddressAction getData
+  @AddressAction remove;
+  @AddressAction getData;
 
-    onCancel () {
-      this.show = false;
-    }
+  onCancel () {
+    this.show = false;
+  }
 
-    onConfirm () {
-      this.show = false;
-      this.remove(this.clickId).then(msg => msg && this.$vux.toast.show(msg));
-    }
-    deleteAddress (id) {
-      this.show = true;
-      this.clickId = id;
-    }
-    created () {
-      this.getData();
-    }
+  onConfirm () {
+    this.show = false;
+    this.remove(this.clickId).then(msg => msg && this.$vux.toast.show(msg));
+  }
+  deleteAddress (id) {
+    this.show = true;
+    this.clickId = id;
+  }
+  created () {
+    this.getData();
+  }
 }
 </script>
-<style lang="less" scoped>
-.address{
-    .bottom-button{
-        padding:0 0.16rem;
-        position: fixed;
-        bottom:0;
-        margin: 0.16rem;
-        width: calc(~"100% - 0.32rem");
-    }
+<style lang="less">
+.address-index {
+  .vux-no-group-title,
+  .weui-cells {
+    margin-top: 0 !important;
+    margin-bottom: 0.15rem;
+  }
+  .weui-cell:before {
+    left: 0 !important;
+  }
+  .bottom-button {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
 }
 </style>

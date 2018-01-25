@@ -12,6 +12,7 @@ import { State, namespace, Action } from 'vuex-class';
 const ProductsState = namespace('products', State);
 const ProductsAction = namespace('products', Action);
 const GlobalState = namespace('global', State);
+const IndexState = namespace('index', State);
 @Component({
   components: {LInput, XButton, Toast}
 })
@@ -19,6 +20,7 @@ export default class IntentionSubmit extends Vue {
   @ProductsState tempData;
   @GlobalState storeId;
   @ProductsAction submitIntentionList;
+  @IndexState shareInfo
     list=[{
       label: '姓名',
       placeholder: '请填写姓名',
@@ -59,7 +61,7 @@ export default class IntentionSubmit extends Vue {
           const params = {
             'store_id': this.storeId,
             'shop_ids': JSON.stringify(this.tempData),
-            'share_user_id': '62',
+            'share_user_id': this.shareInfo.user_id,
             'full_address': arr[3].value,
             'phone': arr[1].value,
             'name': arr[0].value,

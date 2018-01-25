@@ -29,6 +29,7 @@ const IntentionSubmit = () => import('@/components/intention/submit');
 const Address = () => import('@/components/address/index');
 const AddAddress = () => import('@/components/address/add');
 const Cardlist = () => import('@/components/cardlist/index');
+const EditInfo = () => import('@/components/index/editInfo');
 Vue.use(Router);
 const router = new Router({
   routes: [
@@ -74,7 +75,8 @@ const router = new Router({
     {path: '/address/add', name: '添加新地址', component: AddAddress},
     {path: '/address/edit/:id', name: '编辑地址', component: AddAddress},
     {path: '/login', name: '登录', component: Login},
-    {path: '/register', name: '注册', component: Register}
+    {path: '/register', name: '注册', component: Register},
+    {path: '/editInfo', name: '信息修改', component: EditInfo}
   ],
   mode: 'hash',
   scrollBehavior (to, from, savedPosition) {

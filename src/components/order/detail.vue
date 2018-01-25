@@ -33,7 +33,7 @@
 </template>
 <script>
 import { Component, Vue } from 'vue-property-decorator';
-import {Cell, Group, CellFormPreview, Flexbox, FlexboxItem} from 'vux';
+import { Cell, Group, CellFormPreview, Flexbox, FlexboxItem } from 'vux';
 import { axios } from '../../js';
 import Item from './item';
 import qs from 'qs';
@@ -49,39 +49,49 @@ import qs from 'qs';
   }
 })
 export default class OrderDetail extends Vue {
-  name=''
-  phone=''
-  address=''
-  list=[]
-  count=0
-  orderStatus=0
-  orderSn=''
-  expressNo=''
-  expressName=''
-  time=''
-  context=''
-  totalPrice=0
-  preview=[{
-    label: '下单时间',
-    value: ''
-  }, {
-    label: '运费',
-    value: ''
-  }, {
-    label: '合计',
-    value: ''
-  }]
+  name = '';
+  phone = '';
+  address = '';
+  list = [];
+  count = 0;
+  orderStatus = 0;
+  orderSn = '';
+  expressNo = '';
+  expressName = '';
+  time = '';
+  context = '';
+  totalPrice = 0;
+  preview = [
+    {
+      label: '下单时间',
+      value: ''
+    },
+    {
+      label: '运费',
+      value: ''
+    },
+    {
+      label: '合计',
+      value: ''
+    }
+  ];
 
   get type () {
     switch (this.orderStatus) {
-      case '1':return '待发货';
-      case '2':return '待收货';
-      case '3':return '已完成';
+      case '1':
+        return '待发货';
+      case '2':
+        return '待收货';
+      case '3':
+        return '已完成';
     }
   }
 
   async getInfo () {
-    const {result, status: { code, msg }} = await axios.post('/order/details', qs.stringify({ order_sn: this.$route.params.id }));
+    const { result, status: { code, msg } } = await axios.post(
+      '/order/details',
+      qs.stringify({ order_sn: this.$route.params.id })
+    );
     if (code === '00000') {
       this.name = result.address_info.name;
       this.phone = result.address_info.phone;
@@ -107,28 +117,28 @@ export default class OrderDetail extends Vue {
 }
 </script>
 <style lang="less" scoped>
-.order-detail{
-    .link{
-        width: calc( ~"70% - 0.32rem" );
-        float: right;
-    }
-    .label{
-        width: 30%;
-        padding-left:0.16rem;
-    }
+.order-detail {
+  .link {
+    width: calc(~"70% - 0.32rem");
+    float: right;
+  }
+  .label {
+    width: 30%;
+    padding-left: 0.16rem;
+  }
 }
 </style>
 <style lang="less">
-.order-detail{
-    .weui-form-preview__label{
-        font-size: 0.14rem;
-        color: #A6A6A6;
-        letter-spacing: -0.0034rem;
-    }
-    .weui-form-preview__value{
-        font-size: 0.14rem;
-        color: #3C3C3C;
-        letter-spacing: -0.0034rem;
-    }
+.order-detail {
+  .weui-form-preview__label {
+    font-size: 0.14rem;
+    color: #a6a6a6;
+    letter-spacing: -0.0034rem;
+  }
+  .weui-form-preview__value {
+    font-size: 0.14rem;
+    color: #3c3c3c;
+    letter-spacing: -0.0034rem;
+  }
 }
 </style>

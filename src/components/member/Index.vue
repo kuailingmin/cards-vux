@@ -1,12 +1,12 @@
 <template>
   <div class="member">
     <div class="mer">
-       <x-img class="avatar" :default-src="initImg" :src="`${avatar.split('?')[0]}?x-oss-process=image/resize,w_60/format,jpg`" :webp-src="`${avatar.split('?')[0]}?x-oss-process=image/resize,w_60/format,webp`" container="#vux_view_box_body"/>
-       <p v-if="!token" class="logintxt" @click="toLogin">请登录</p>
+      <avatar backgroundColor="#B79E74" color="#ffffff" :size="60" :src="userInfo.head_pic" username="Avatar"></avatar>
+       <p v-if="token===''" class="logintxt" @click="toLogin">请登录</p>
        <ul class="merinfo" v-else>
          <li>
-           <label class="lableft labcom">{{realname}}</label>
-           <label class="labright labcom">{{level}}</label>
+           <label class="lableft labcom">{{userInfo.realname}}</label>
+           <label class="labright labcom">{{userInfo.lever_name}}</label>
          </li>
          <li class="text gray">杭州礼管家网络科技有限公司</li>
        </ul>
@@ -15,55 +15,79 @@
       <cell title="我的订单" is-link link="/order"></cell>
     </group>
     <group>
-      <cell title="现金账户" :value="`￥${balance}`" is-link link="/member/money"></cell>
+      <cell title="现金账户" :value="`￥${userInfo.balance}`" is-link link="/member/money"></cell>
       <cell title="收货地址" is-link link="/address"></cell>
-      <cell title="我的卡券商城" :value="sta" is-link link="/mine"></cell>
+      <cell title="我的卡券商城" @click.native="handleSetShowEdit" is-link>{{isRead.is_read==='0'?'':'有新的订单'}}</cell>
     </group>
     <group v-once>
       <cell title="客户服务" value="0571-12345678"></cell>
       <cell title="帮助中心" is-link link="/help"></cell>
     </group>
-    <div class="exit text" @click="exit" v-if="token">退出登录</div>  
+    <div class="exit text" @click="exit" v-if="token!==''">退出登录</div>  
     <p v-once class="text gray bottom-txt">飞象企服提供技术支持</p>
   </div>
 </template>
 <script>
-import { Cell, Group, XImg } from 'vux';
+import { Cell, Group, XImg, Toast } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
-import { State, Action, namespace } from 'vuex-class';
-import initImg from '../../assets/init.png';
+import { State, Action, namespace, Mutation } from 'vuex-class';
+import Avatar from 'vue-avatar';
 const UserState = namespace('user', State);
 const UserAction = namespace('user', Action);
+const GlobalMutation = namespace('global', Mutation);
 @Component({
   components: {
     Cell,
     Group,
-    XImg
+    XImg,
+    Toast,
+    Avatar
   }
 })
 export default class Member extends Vue {
-  sta = '有新的订单';
-  initImg=initImg;
-  @UserState avatar
-  @UserState balance
-  @UserState realname
-  @UserState level
-  @UserState token
-  @UserAction getInfo
-  created () {
-    this.getInfo().then(msg => msg && this.$vux.toast.text(msg));
+  @UserState token;
+  @UserState userInfo;
+  @UserState isRead;
+  @UserAction getInfo;
+  @UserAction initGetIsRead;
+  @GlobalMutation isShowEdit;
+  handleSetShowEdit () {
+    this.$store.commit('global/isShowEdit', true);
+    this.$router.push('/mine');
+  }
+  activated () {
+    this.initial();
+  }
+  initial () {
+    const params = {};
+    this.getInfo(params).then(msg => {
+      if (msg) {
+        this.$vux.toast.text(msg, 'middle');
+      }
+    });
+    this.initGetIsRead(params).then(msg => {
+      if (msg) {
+        this.$vux.toast.text(msg, 'middle');
+      }
+    });
   }
   toLogin () {
     this.$router.push('/login');
   }
-  exit () {}
+  exit () {
+    localStorage.setItem('token', '');
+    this.$store.commit('user/setToken', '');
+    this.initial();
+  }
 }
 </script>
-<style lang="less" scoped>
-.member{
-  .avatar{
-    width:0.6rem;
-    height:0.6rem;
+<style lang="less">
+.member {
+  .weui-cell:before {
+    left: 0 !important;
+  }
+  .vue-avatar--wrapper {
+    margin: 0 0.15rem;
   }
   .disflex {
     display: flex;
@@ -111,11 +135,12 @@ export default class Member extends Vue {
     background: #fff;
     margin-top: 0.15rem;
   }
-  .bottom-txt{
-      position:fixed;
-      bottom:0.6rem;
-      text-align: center;
-      width:100%;
+  .bottom-txt {
+    position: fixed;
+    bottom: 0.6rem;
+    text-align: center;
+    width: 100%;
+    padding-bottom: 0.2rem;
   }
 }
 </style>

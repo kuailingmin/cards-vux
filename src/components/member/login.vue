@@ -20,89 +20,143 @@
       </flexbox>
       <x-button class="button" @click.native="signIn">登录</x-button>
       <flexbox justify="space-between" class="line">
-          <p class="text brown"><span class="gray">没有账号？</span><a @click="$router.push('/register')">马上注册</a></p>
-          <a class="text brown " @click="type=!type">{{type?'密码登录':'短信登录'}} >></a>
+          <p class="text brown"><span class="gray">没有账号？</span><span @click="$router.push('/register')">马上注册</span></p>
+          <span class="text brown " @click="type=!type">{{type?'密码登录':'短信登录'}} >></span>
       </flexbox>
   </div>
 </template>
 <script>
 import { Component, Vue } from 'vue-property-decorator';
-import {Flexbox, FlexboxItem, XButton, XImg} from 'vux';
-import {Action, namespace} from 'vuex-class';
-
+import { Flexbox, FlexboxItem, XButton, XImg, Toast } from 'vux';
+import { Action, State, namespace } from 'vuex-class';
 const UserAction = namespace('user', Action);
-
+const GlobalState = namespace('global', State);
+let timer = null;
 @Component({
-  components: {Flexbox, FlexboxItem, XButton, XImg}
+  components: { Flexbox, FlexboxItem, XButton, XImg, Toast },
+  watch: {
+    $route: function (val, oldval) {
+      if (timer) {
+        this.time = 0;
+        clearInterval(timer);
+      }
+    }
+  }
 })
 export default class Login extends Vue {
-    type=false
-    phone=''
-    password=''
-    code=''
-    time=0
-
-    @UserAction login
-    @UserAction sendCode
-
-    sendCodeClick () {
-      this.sendCode({
+  @UserAction login;
+  @UserAction sendCode;
+  @GlobalState storeId;
+  type = false;
+  phone = '';
+  password = '';
+  code = '';
+  time = 0;
+  isType = 0;
+  bStop = false;
+  sendCodeClick () {
+    let reg = /^(((1[0-9]{2}))+\d{8})$/;
+    if (!reg.test(this.phone)) {
+      this.$vux.toast.text('请输入有效的手机号码', 'middle');
+    } else {
+      const params = {
+        store_id: this.storeId,
         mobile: this.phone,
         type: 'login-shop'
-      }).then(msg => {
+      };
+      this.sendCode(params).then(msg => {
         if (msg) {
-          this.$vux.toast.text(msg);
+          this.bStop = false;
+          this.$vux.toast.text(msg, 'middle');
         } else {
+          this.bStop = true;
           this.time = 60;
-          const id = setInterval(() => {
+          timer = setInterval(() => {
             if (this.time > 0) {
               this.time--;
             } else {
-              clearInterval(id);
+              clearInterval(timer);
             }
           }, 1000);
         }
       });
     }
-
-    signIn () {
-      this.login({
+  }
+  signIn () {
+    let flag = true;
+    let reg = /^(((1[0-9]{2}))+\d{8})$/;
+    if (this.type && this.code === '') {
+      this.$vux.toast.text('请输入验证码', 'middle');
+      flag = false;
+    }
+    if (this.phone === '' || !reg.test(this.phone)) {
+      this.$vux.toast.text('请输入有效的手机号码', 'middle');
+      flag = false;
+    }
+    if (!this.type && this.password === '') {
+      this.$vux.toast.text('请输入密码', 'middle');
+      flag = false;
+    }
+    if (!this.type) {
+      this.bStop = true;
+      this.isType = 0;
+    } else {
+      this.isType = 1;
+    }
+    if (flag && this.bStop) {
+      const params = {
+        store_id: this.storeId,
         mobile: this.phone,
         pwd: this.type ? this.code : this.password,
-        type: this.type ? 1 : 0
-      }).then(msg => msg ? this.$vux.toast.text(msg) : this.$router.push('/main'));
+        type: this.isType
+      };
+      this.login(params).then(msg => {
+        if (msg) {
+          this.$vux.toast.text(msg, 'middle');
+        } else {
+          clearInterval(timer);
+          this.$router.push('/main');
+        }
+      });
     }
+  }
 }
 </script>
 <style lang="less" scoped>
-.login{
-    background: #FFFFFF;
-    height: 100%;
-    padding: 0 0.16rem;
-    .top-image{
-        width: 100%;
-        max-height:1.25rem;
-        overflow: hidden;
+.login {
+  .weui-btn {
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  background: #ffffff;
+  height: 100%;
+  padding: 0 0.16rem;
+  .top-image {
+    width: 100%;
+    max-height: 1.25rem;
+    overflow: hidden;
+  }
+  .box {
+    margin-top: 0.16rem;
+    border: 1px solid #979797;
+    border-radius: 3px;
+    width: 100%;
+    height: 0.4rem;
+    input {
+      padding: 0 0.08rem;
+      border: none;
+      width: 100%;
+      height: 100%;
+      font-size: 0.14rem;
     }
-    .box{
-        margin-top: 0.16rem;
-        border: 1px solid #979797;
-        border-radius: 3px;
-        width:100%;
-        height:0.4rem;
-        input{
-            padding: 0 0.08rem;
-            border:none;
-            width:100%;
-            height:100%;
-            font-size:0.14rem;
-        }
-    }
-    .button{
-        margin-top: 0.16rem;
-    }
-    .line{
-        margin-top: 0.16rem;
-    }
+  }
+  .button {
+    margin-top: 0.16rem;
+  }
+  .line {
+    margin-top: 0.16rem;
+  }
 }
 </style>

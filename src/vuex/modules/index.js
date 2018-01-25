@@ -19,7 +19,9 @@ const state = {
   page: 1,
   pageSize: 6,
   isEnd: false,
-  intentionList: {}
+  intentionList: {},
+  uploadRes: {},
+  shareInfo: {}
 };
 
 const actions = {
@@ -45,6 +47,34 @@ const actions = {
     const {result, status: {code, msg}} = await axios.post('/site/get-intention-list', qs.stringify(params));
     if (code === '00000') {
       commit('getIntentionList', result);
+    } else {
+      return msg;
+    }
+  },
+  async initGetShareInfo ({commit, rootState, state}, params) {
+    const {result, status: {code, msg}} = await axios.post('/intention-list/get-share-user-info', qs.stringify(params));
+    if (code === '00000') {
+      commit('getShareInfo', result);
+    } else {
+      return msg;
+    }
+  },
+  async saveEditInfo ({commit, rootState, state}, params) {
+    const {status: {code, msg}} = await axios.post('/site/update-info', qs.stringify(params));
+    if (code === '00000') {
+    } else {
+      return msg;
+    }
+  },
+  async initUploadImg ({commit, rootState, state}, params) {
+    let config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    const {result, status: {code, msg}} = await axios.post('/site/upload', params, config);
+    if (code === '00000') {
+      commit('getUploadRes', result);
     } else {
       return msg;
     }
@@ -75,6 +105,12 @@ const mutations = {
   },
   getIntentionList (state, data) {
     state.intentionList = data;
+  },
+  getUploadRes (state, data) {
+    state.uploadRes = data;
+  },
+  getShareInfo (state, data) {
+    state.shareInfo = data;
   }
 };
 

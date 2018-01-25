@@ -262,7 +262,7 @@ export default class Cart extends Vue {
         }
       }
     }
-    created () {
+    activated () {
       const params = {};
       this.init(params).then(msg => {
         if (msg) {

@@ -19,15 +19,12 @@
 <script>
 import { ViewBox, XHeader, Tabbar, TabbarItem } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
-import {State, namespace} from 'vuex-class';
+import { State, namespace } from 'vuex-class';
 const GlobalState = namespace('global', State);
 @Component({
-  components: {ViewBox, XHeader, Tabbar, TabbarItem}
-})
-export default class App extends Vue {
-    @GlobalState title
-    tabs = []
-    created () {
+  components: { ViewBox, XHeader, Tabbar, TabbarItem },
+  watch: {
+    $route: function (val, oldval) {
       if (/mine/.test(location.hash.split('/')[1])) {
         this.tabs = [
           { name: '首页', selected: true, iconfont: '&#xe65d;', link: '/mine' },
@@ -43,7 +40,12 @@ export default class App extends Vue {
         ];
       }
     }
-};
+  }
+})
+export default class App extends Vue {
+  @GlobalState title;
+  tabs = [];
+}
 </script>
 <style lang="less" scoped>
 #app {
@@ -51,30 +53,30 @@ export default class App extends Vue {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  height:100%;
+  height: 100%;
   font-size: 0.14rem;
-  background: #F6F6F6;
-  .header{
-    width:100%;
+  background: #f6f6f6;
+  .header {
+    width: 100%;
     position: absolute;
-    left:0;
-    top:0;
-    z-index:992;
+    left: 0;
+    top: 0;
+    z-index: 992;
   }
 }
 </style>
 <style lang="less">
 @import "~vux/src/styles/reset.less";
 @import "./css/common.less";
-  #vux_view_box_body{
-    overflow-x: hidden;
-  }
-.weui-grid{
-  text-decoration: none;
-  padding:0.04rem!important;
+#vux_view_box_body {
+  overflow-x: hidden;
 }
-.vux-cell-form-preview{
-  font-size:0.14rem
+.weui-grid {
+  text-decoration: none;
+  padding: 0.04rem !important;
+}
+.vux-cell-form-preview {
+  font-size: 0.14rem;
 }
 </style>
 

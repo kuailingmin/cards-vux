@@ -2,7 +2,7 @@
     <div class="intention">
         <scroller lock-x @on-scroll-bottom="onScrollBottom" ref="scrollerBottom" :scroll-bottom-offst="200" style="overflow:initial">
             <group gutter="0">
-                <cell is-link v-for="(item, index) in dataList" :key="index" :link="`/intention/detail/${item.id}`" style="height:0.6rem;">
+                <cell is-link v-for="(item, index) in dataList" :key="index" :link="`/intention/detail/${item.id}`">
                     <flexbox slot="title" align="center">
                         <flexbox-item :span="0.6" class="text">{{item.create_time}}</flexbox-item>
                         <flexbox-item class="text">{{item.name}}</flexbox-item>
@@ -71,11 +71,16 @@ export default class Intention extends Vue {
 .intention{
     font-size: 0.14rem;
     padding-bottom: 0.44rem;
+    .text {
+      margin-left: 0.3rem !important;
+    }
+    .weui-cell {
+      height: 0.4rem;
+    }
     .weui-cells {
         margin-bottom: 0.15rem !important;
     }
     .weui-loadmore {
-        height: 0.44rem;
         width: 100%;
         display: flex;
         align-items: center;

@@ -16,33 +16,43 @@
 </template>
 <script>
 import { Component, Vue } from 'vue-property-decorator';
-import {Flexbox, FlexboxItem} from 'vux';
+import { Flexbox, FlexboxItem } from 'vux';
 import { axios } from '../../js';
 import qs from 'qs';
 
 @Component({
-  components: {Flexbox, FlexboxItem}
+  components: { Flexbox, FlexboxItem }
 })
 export default class Delivery extends Vue {
-  state=0
-  expressNo=''
-  expressName=''
-  list=[]
+  state = 0;
+  expressNo = '';
+  expressName = '';
+  list = [];
 
   get status () {
     switch (this.state) {
-      case 0:return '在途';
-      case 1:return '揽件';
-      case 2:return '疑难';
-      case 3:return '签收';
-      case 4:return '退签';
-      case 5:return '派件';
-      case 6:return '退回';
+      case 0:
+        return '在途';
+      case 1:
+        return '揽件';
+      case 2:
+        return '疑难';
+      case 3:
+        return '签收';
+      case 4:
+        return '退签';
+      case 5:
+        return '派件';
+      case 6:
+        return '退回';
     }
   }
 
   async getInfo () {
-    const {result, status: { code, msg }} = await axios.post('/order/get-express', qs.stringify({ order_sn: this.$route.params.id }));
+    const { result, status: { code, msg } } = await axios.post(
+      '/order/get-express',
+      qs.stringify({ order_sn: this.$route.params.id })
+    );
     if (code === '00000') {
       this.list = result.data;
       this.state = result.state;
@@ -59,14 +69,14 @@ export default class Delivery extends Vue {
 }
 </script>
 <style lang="less" scoped>
-.delivery{
-    > * {
-        padding:0.08rem 0.16rem;
-        width: calc(~"100% - 0.32rem");
-        background: #ffffff;
-    }
-    .text{
-        background: #ffffff;
-    }
+.delivery {
+  > * {
+    padding: 0.08rem 0.16rem;
+    width: calc(~"100% - 0.32rem");
+    background: #ffffff;
+  }
+  .text {
+    background: #ffffff;
+  }
 }
 </style>

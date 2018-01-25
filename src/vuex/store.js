@@ -10,8 +10,8 @@ import address from './modules/address';
 import cart from './modules/cart';
 import confirmOrder from './modules/confirmOrder';
 import recharge from './modules/recharge';
+import balance from './modules/balance';
 Vue.use(Vuex);
-
 export default new Vuex.Store({
   modules: {
     user,
@@ -23,6 +23,7 @@ export default new Vuex.Store({
     cart,
     address,
     confirmOrder,
-    recharge
+    recharge,
+    balance
   }
 });
