@@ -5,7 +5,6 @@ const state = {
   categoryData: [
     {children: []}
   ],
-  tempData: [],
   intentionList: {},
   intentionDetail: {},
   shopDetails: {}
@@ -75,9 +74,6 @@ const mutations = {
   },
   getIntentionList (state, data) {
     state.intentionList = data;
-  },
-  getTempData (state, data) {
-    state.tempData = data;
   },
   getIntentionDetail (state, data) {
     state.intentionDetail = data;

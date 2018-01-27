@@ -2,14 +2,14 @@
   <div class="detail-index">
     <div class="image">
       <span class="left" @click="$router.go(-1)"><img src="../../assets/back.png" alt=""></span>
-      <span class="right" @click="$router.push('/main/cart')"><img src="../../assets/cart.png" alt=""></span>
+      <span class="right" @click="showEdit?$router.push('/mine/intentionList'):$router.push('/main/cart')"><img src="../../assets/cart.png" alt=""></span>
       <img class="my-img" :src="shopDetails.pic_url" alt="">
     </div>
     <div class="shop-title">{{shopDetails.name}}</div>
     <div class="shop-price"><span class="market-price">￥{{shopDetails.price}}</span><span><del class="original-price"> ￥{{'1000'}}</del></span></div>
     <group>
       <cell><span>库存</span><span>{{shopDetails.stock}}</span></cell>
-      <cell is-link><span>查看可兑换商品</span></cell>
+      <cell is-link :link="shopDetails.mall_url"><span>{{shopDetails.mall_title}}</span></cell>
     </group>
     <div class="card">
       <div class="card-title">购卡须知</div>
@@ -46,7 +46,11 @@ export default class Detail extends Vue {
   @GlobalState storeId
   imgWidth = parseInt(screen.width)
   count = 1
+  showEdit = false
+  tempData = []
   created () {
+    this.showEdit = JSON.parse(localStorage.getItem('showEdit') || 'false');
+    this.tempData = JSON.parse(localStorage.getItem('tempData') || '[]');
     const params = {
       'store_id': this.storeId,
       'id': this.$route.params.id
@@ -58,15 +62,36 @@ export default class Detail extends Vue {
     });
   }
   addCart () {
-    const params = {
-      'num': this.count,
-      'shopId': this.shopDetails.id
-    };
-    this.addReduce(params).then(msg => {
-      if (msg) {
-        this.$vux.toast.text(msg, 'middle');
+    if (this.showEdit) {
+      let flag = true;
+      this.tempData.forEach(item => {
+        if (item.id === this.shopDetails.id) {
+          item.num = this.count;
+          flag = false;
+        }
+      });
+      if (flag) {
+        this.tempData.push({
+          'id': this.shopDetails.id,
+          'num': this.count,
+          'is_selected': 1
+        });
       }
-    });
+      localStorage.setItem('tempData', JSON.stringify(this.tempData));
+      this.$vux.toast.text('加入购物车成功', 'middle');
+    } else {
+      const params = {
+        'num': this.count,
+        'shop_id': this.shopDetails.id
+      };
+      this.addReduce(params).then(msg => {
+        if (msg) {
+          this.$vux.toast.text(msg, 'middle');
+        } else {
+          this.$vux.toast.text('加入购物车成功', 'middle');
+        }
+      });
+    }
   }
 }
 </script>
@@ -91,6 +116,7 @@ export default class Detail extends Vue {
   .add-cart {
     width: 1.5rem;
     height: 100%;
+    padding: 0 !important;
   }
   .detail-foot {
     background: #ffffff;

@@ -20,27 +20,29 @@ import { Component, Vue } from 'vue-property-decorator';
 import { State, namespace } from 'vuex-class';
 const GlobalState = namespace('global', State);
 @Component({
-  components: { ViewBox, XHeader, Tabbar, TabbarItem }
+  components: { ViewBox, XHeader, Tabbar, TabbarItem },
+  watch: {
+    '$route': function (val, oldval) {
+      if (/mine/.test(location.hash.split('/')[1])) {
+        this.tabs = [
+          { name: '首页', selected: true, iconfont: '&#xe65d;', link: '/mine' },
+          { name: '分类', iconfont: '&#58965;', link: '/mine/classification' },
+          { name: '意向单', iconfont: '&#xe660;', link: '/mine/intentionList' }
+        ];
+      } else {
+        this.tabs = [
+          { name: '首页', selected: true, iconfont: '&#xe65d;', link: '/main' },
+          { name: '分类', iconfont: '&#58965;', link: '/main/classification' },
+          { name: '购物车', iconfont: '&#xe65c;', link: '/main/cart' },
+          { name: '会员', iconfont: '&#58967;', link: '/main/member' }
+        ];
+      }
+    }
+  }
 })
 export default class App extends Vue {
   @GlobalState title;
   tabs = [];
-  created () {
-    if (/mine/.test(location.hash.split('/')[1])) {
-      this.tabs = [
-        { name: '首页', selected: true, iconfont: '&#xe65d;', link: '/mine' },
-        { name: '分类', iconfont: '&#58965;', link: '/mine/classification' },
-        { name: '意向单', iconfont: '&#xe660;', link: '/mine/intentionList' }
-      ];
-    } else {
-      this.tabs = [
-        { name: '首页', selected: true, iconfont: '&#xe65d;', link: '/main' },
-        { name: '分类', iconfont: '&#58965;', link: '/main/classification' },
-        { name: '购物车', iconfont: '&#xe65c;', link: '/main/cart' },
-        { name: '会员', iconfont: '&#58967;', link: '/main/member' }
-      ];
-    }
-  }
 }
 </script>
 <style lang="less" scoped>

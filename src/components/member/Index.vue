@@ -30,11 +30,10 @@
 <script>
 import { Cell, Group, XImg, Toast } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
-import { State, Action, namespace, Mutation } from 'vuex-class';
+import { State, Action, namespace } from 'vuex-class';
 import Avatar from 'vue-avatar';
 const UserState = namespace('user', State);
 const UserAction = namespace('user', Action);
-const GlobalMutation = namespace('global', Mutation);
 @Component({
   components: {
     Cell,
@@ -50,9 +49,8 @@ export default class Member extends Vue {
   @UserState isRead;
   @UserAction getInfo;
   @UserAction initGetIsRead;
-  @GlobalMutation isShowEdit;
   handleSetShowEdit () {
-    this.$store.commit('global/isShowEdit', true);
+    localStorage.setItem('showEdit', JSON.stringify(true));
     this.$router.push('/mine');
   }
   created () {

@@ -76,9 +76,6 @@ const GlobalState = namespace('global', State);
   }
 })
 export default class Index extends Vue {
-  imgWidth= screen.width
-  showTip=false
-  loading=false
   @IndexState recommend
   @IndexState shareInfo
   @UserState userInfo
@@ -94,7 +91,10 @@ export default class Index extends Vue {
   @IndexMutation setPage
   handleClickToIntention
   @GlobalState storeId;
-  @GlobalState showEdit;
+  imgWidth= screen.width
+  showTip=false
+  loading=false
+  showEdit = false
   handleToInfoEdit () {
     this.$router.push('/editInfo');
   }
@@ -102,6 +102,7 @@ export default class Index extends Vue {
     this.showTip ? this.showTip = false : this.showTip = true;
   }
   created () {
+    this.showEdit = JSON.parse(localStorage.getItem('showEdit'));
     this.init().then(msg => {
       msg && this.$vux.toast.text(msg);
       this.setPage(this.page + 1);

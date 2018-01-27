@@ -49,7 +49,6 @@ const CartAction = namespace('cart', Action);
 })
 export default class Classification extends Vue {
   @ProductsState initData
-  @ProductsState tempData
   @ProductsState categoryData
   @ProductsAction init
   @ProductsAction initCategoryData
@@ -62,11 +61,12 @@ export default class Classification extends Vue {
   isActive1 = 0
   orderBy = 1
   orderByType = 1
-  intentionData = []
   flag = true
   isLoading = true
   onFetching = false
   dataList = []
+  tempData = []
+  showEdit = false
   orderByList = [
     {title: '默认排序', orderType: '1'},
     {title: '销量从高到低', orderType: '2'},
@@ -93,18 +93,23 @@ export default class Classification extends Vue {
     }
   }
   handleAddCart (item) {
-    if (/mine/.test(this.$route.path)) {
-      if (this.intentionData.indexOf(item) === -1) {
-        this.intentionData.push(item);
+    if (this.showEdit) {
+      let bStop = true;
+      this.tempData.forEach(project => {
+        if (project.id === item.id) {
+          bStop = false;
+        }
+      });
+      if (bStop) {
         this.tempData.push({
           'id': item.id,
           'num': 1,
           'is_selected': 1
         });
-        this.$vux.toast.text('加入购物车成功', 'middle');
+        localStorage.setItem('tempData', JSON.stringify(this.tempData));
       }
-    }
-    if (/main/.test(this.$route.path)) {
+      this.$vux.toast.text('加入购物车成功', 'middle');
+    } else {
       if (this.flag) {
         const params = {
           'shop_id': item.id
@@ -167,7 +172,8 @@ export default class Classification extends Vue {
     this.isShowBox = true;
   }
   created () {
-    this.intentionData = [];
+    this.showEdit = JSON.parse(localStorage.getItem('showEdit') || 'false');
+    this.tempData = JSON.parse(localStorage.getItem('tempData') || '[]');
     this.initial();
     const params = {};
     this.initCategoryData(params).then(msg => {

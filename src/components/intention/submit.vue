@@ -1,6 +1,6 @@
 <template>
     <div class='submit'>
-        <l-input v-for="(item, index) in list" :key="index" :textarea="item.textarea" :type="index" :placeholder="item.placeholder" :label="item.label" v-model="item.value"></l-input>
+        <l-input v-for="(item, index) in list" :key="index" :textarea="item.textarea" :placeholder="item.placeholder" :label="item.label" v-model="item.value"></l-input>
         <x-button class="submit-btn" @click.native="handleSubmit">提 交</x-button>
     </div>
 </template>
@@ -9,7 +9,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import LInput from '../common/input';
 import { XButton, Toast } from 'vux';
 import { State, namespace, Action } from 'vuex-class';
-const ProductsState = namespace('products', State);
 const ProductsAction = namespace('products', Action);
 const GlobalState = namespace('global', State);
 const IndexState = namespace('index', State);
@@ -17,7 +16,6 @@ const IndexState = namespace('index', State);
   components: { LInput, XButton, Toast }
 })
 export default class IntentionSubmit extends Vue {
-  @ProductsState tempData;
   @GlobalState storeId;
   @ProductsAction submitIntentionList;
   @IndexState shareInfo;
@@ -63,9 +61,10 @@ export default class IntentionSubmit extends Vue {
       if (!reg.test(arr[1].value)) {
         this.$vux.toast.text('请输入有效的手机号码', 'middle');
       } else {
+        let myTempData = localStorage.getItem('myTempData');
         const params = {
           store_id: this.storeId,
-          shop_ids: JSON.stringify(this.tempData),
+          shop_ids: myTempData,
           share_user_id: this.shareInfo.user_id,
           full_address: arr[3].value,
           phone: arr[1].value,

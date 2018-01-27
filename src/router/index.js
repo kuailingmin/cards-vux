@@ -54,7 +54,7 @@ const router = new Router({
     },
     {path: '/', redirect: '/main', hidden: true},
     {path: '/cardlist', name: '卡券列表', component: Cardlist},
-    {path: '/detail/:id', name: '商品详情', component: Detail},
+    {path: '/detail/:id', name: '实体卡', component: Detail},
     {path: '/confirmOrder', name: '确认订单', component: ConfirmOrder},
     {path: '/orderPaySuccess', name: '订单支付成功', component: OrderPaySuccess},
     {path: '/submitSuccess', name: '提交成功', component: SubmitSuccess},

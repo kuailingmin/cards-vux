@@ -34,10 +34,9 @@
 <script>
 import { CheckIcon, Toast } from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
-import { State, namespace, Action, Mutation } from 'vuex-class';
+import { State, namespace, Action } from 'vuex-class';
 const ProductsState = namespace('products', State);
 const ProductsAction = namespace('products', Action);
-const ProductsMutation = namespace('products', Mutation);
 const GlobalState = namespace('global', State);
 @Component({
   components: {
@@ -46,12 +45,11 @@ const GlobalState = namespace('global', State);
   }
 })
 export default class Cart extends Vue {
-  @ProductsState tempData;
   @ProductsState intentionList;
   @GlobalState storeId;
   @ProductsAction initGetIntentionList;
-  @ProductsMutation getTempData
   isEdit = false;
+  myTempData = []
   computedPrice () {
     let totalPrice = 0;
     this.intentionList.list.forEach(item => {
@@ -166,40 +164,58 @@ export default class Cart extends Vue {
   }
   handleClick () {
     if (this.isEdit) {
-      this.intentionList.list.forEach(item => {
-        item.goods.forEach((subItem, index) => {
-          if (subItem.is_selected === 1) {
-            item.goods.splice(index, 1);
+      let arr = this.intentionList.list;
+      let len = this.intentionList.list.length;
+      for (let i = 0; i < len; i++) {
+        let arr2 = arr[i].goods;
+        let len2 = arr[i].goods.length - 1;
+        for (let j = len2; j >= 0; j--) {
+          if (arr2[j].is_selected === 1) {
+            arr2.splice(j, 1);
           }
+        }
+      }
+      let tempData = [];
+      this.intentionList.list.forEach(item => {
+        item.goods.forEach(subItem => {
+          tempData.push({
+            'id': subItem.id,
+            'num': subItem.num,
+            'is_selected': subItem.is_selected
+          });
         });
       });
+      localStorage.setItem('tempData', JSON.stringify(tempData));
       this.computedPrice();
     } else {
       if (this.intentionList.list) {
-        this.$store.commit('products/getTempData', []);
         let flag = false;
         this.intentionList.list.forEach(item => {
           item.goods.forEach(subItem => {
             if (subItem.is_selected === 1) {
-              this.tempData.push({
-                id: subItem.id,
-                num: subItem.num,
-                is_selected: subItem.is_selected
+              this.myTempData.push({
+                'id': subItem.id,
+                'num': subItem.num,
+                'is_selected': subItem.is_selected
               });
               flag = true;
             }
           });
         });
-        flag
-          ? this.$router.push('/intention/submit')
-          : this.$vux.toast.text('您还没有勾选宝贝哦~', 'middle');
+        if (flag) {
+          localStorage.setItem('myTempData', JSON.stringify(this.myTempData));
+          this.$router.push('/intention/submit');
+        } else {
+          this.$vux.toast.text('您还没有勾选宝贝哦~', 'middle');
+        }
       }
     }
   }
   created () {
+    let tempData = localStorage.getItem('tempData') || '[]';
     const params = {
-      store_id: this.storeId,
-      shop_ids: JSON.stringify(this.tempData)
+      'store_id': this.storeId,
+      'shop_ids': tempData
     };
     this.initGetIntentionList(params).then(msg => {
       if (msg) {
@@ -306,6 +322,7 @@ export default class Cart extends Vue {
     align-items: center;
     padding: 0 0.14rem;
     font-size: 0.14rem;
+    z-index: 999;
   }
   .cart-edit {
     color: #b79e74;
@@ -316,20 +333,44 @@ export default class Cart extends Vue {
     margin-top: 0.15rem;
   }
   .con-top {
+    position: relative;
     height: 0.44rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 0 0.14rem;
-    border-bottom: 1px solid #d9d9d9;
+  }
+  .con-top:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    border-bottom: 1px solid #D9D9D9;
+    color: #D9D9D9;
+    transform-origin: 0 100%;
+    transform: scaleY(0.5);
   }
   .con-mid {
-    border-bottom: 1px solid #d9d9d9;
+    position: relative;
     height: 1rem;
     padding: 0.15rem 0.14rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .con-mid:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    border-bottom: 1px solid #D9D9D9;
+    color: #D9D9D9;
+    transform-origin: 0 100%;
+    transform: scaleY(0.5);
   }
   .img,
   .my-img {

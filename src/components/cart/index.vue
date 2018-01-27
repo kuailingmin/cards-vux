@@ -374,6 +374,7 @@ export default class Cart extends Vue {
             align-items: center;
             padding: 0 0.14rem;
             font-size: 0.14rem;
+            z-index: 999;
         }
         .cart-edit {
             color: #B79E74;
@@ -384,20 +385,42 @@ export default class Cart extends Vue {
             margin-top: 0.15rem;
         }
         .con-top {
-            height: 0.44rem;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 0 0.14rem;
-            border-bottom: 1px solid #D9D9D9;
+          position: relative;
+          height: 0.44rem;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          padding: 0 0.14rem;
+        }
+        .con-top:before {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          height: 1px;
+          border-bottom: 1px solid #D9D9D9;
+          color: #D9D9D9;
+          transform-origin: 0 100%;
+          transform: scaleY(0.5);
+        }
+        .con-mid:before {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          height: 1px;
+          border-bottom: 1px solid #D9D9D9;
+          color: #D9D9D9;
+          transform-origin: 0 100%;
+          transform: scaleY(0.5);
         }
         .con-mid {
-            border-bottom: 1px solid #D9D9D9;
-            height: 1rem;
-            padding: 0.15rem 0.14rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+          position: relative;
+          height: 1rem;
+          padding: 0.15rem 0.14rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
         .img, .my-img {
             width: 1rem;
