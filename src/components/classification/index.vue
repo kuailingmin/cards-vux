@@ -212,8 +212,10 @@ export default class Classification extends Vue {
 <style lang="less" scoped>
 .classification{
   width: 100%;
-  padding-bottom: 0.44rem;
-  .my-scorller, .xs-container {
+  .my-scorller {
+    padding-bottom: 0.55rem;
+  }
+  .xs-container {
     float: left;
   }
   .weui-loadmore {

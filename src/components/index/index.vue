@@ -187,6 +187,14 @@ export default class Index extends Vue {
 .index-myIndex {
   font-size: 0.14rem;
   padding-bottom: 0.44rem;
+  .vux-icon-dot {
+    width: 0.12rem !important;
+    height: 0.04rem !important;
+    background: #D9D9D9;
+  }
+  .active {
+    background: #3c3c3c !important;
+  }
   .weui-btn_mini {
     font-size: 0.12rem !important;
   }

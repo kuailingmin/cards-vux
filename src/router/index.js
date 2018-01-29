@@ -78,7 +78,7 @@ const router = new Router({
     {path: '/register', name: '注册', component: Register},
     {path: '/editInfo', name: '信息修改', component: EditInfo}
   ],
-  mode: 'history',
+  mode: 'hash',
   scrollBehavior (to, from, savedPosition) {
     return savedPosition || { x: 0, y: 0 };
   }
