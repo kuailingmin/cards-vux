@@ -22,7 +22,8 @@ const state = {
   intentionList: {},
   uploadRes: {},
   shareInfo: {},
-  WxShare: {}
+  WxShare: {},
+  shareId: ''
 };
 
 const actions = {
@@ -123,6 +124,9 @@ const mutations = {
   },
   getWxShare (state, data) {
     state.WxShare = data;
+  },
+  setShareId (state, data) {
+    state.shareId = data;
   }
 };
 
