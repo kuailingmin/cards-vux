@@ -19,6 +19,7 @@ export default class IntentionSubmit extends Vue {
   @GlobalState storeId;
   @ProductsAction submitIntentionList;
   @IndexState shareInfo;
+  @IndexState shareId;
   list = [
     {
       label: '姓名',
@@ -65,7 +66,7 @@ export default class IntentionSubmit extends Vue {
         const params = {
           store_id: this.storeId,
           shop_ids: myTempData,
-          share_user_id: this.shareInfo.user_id,
+          share_user_id: this.shareId,
           full_address: arr[3].value,
           phone: arr[1].value,
           name: arr[0].value,

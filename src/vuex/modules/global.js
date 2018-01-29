@@ -26,8 +26,11 @@ const actions = {
   }
 };
 const mutations = {
-  setTitle (state, title) {
-    state.title = title;
+  setTitle (state, data) {
+    state.title = data;
+  },
+  setStoreId (state, data) {
+    state.storeId = data;
   },
   setInfo (state, data) {
     for (const prop in data) {
