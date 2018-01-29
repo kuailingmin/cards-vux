@@ -5,12 +5,14 @@
   "author": "蒯灵敏 <22376818@qq.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --open",
+    "hot:dev": "NODE_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --open",
+    "hot:prod": "NODE_ENV=prod  webpack-dev-server --inline --progress --config build/webpack.dev.conf.js --open",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs --fix",
-    "build": "node build/build.js"
+    "build:dev": "NODE_ENV=development node build/build.js",
+    "build:prod": "NODE_ENV=prod node build/build.js"
   },
   "dependencies": {
     "fastclick": "^1.0.6",
