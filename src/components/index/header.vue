@@ -28,15 +28,12 @@
      </flexbox>
   </div>
 </template>
-
 <script>
 import {Swiper, SwiperItem, Marquee, MarqueeItem, Flexbox, FlexboxItem, XImg} from 'vux';
 import { Component, Vue } from 'vue-property-decorator';
 import {State, namespace} from 'vuex-class';
 import initImg from '../../assets/init.png';
-
 const IndexState = namespace('index', State);
-
 @Component({
   components: {Swiper, SwiperItem, Marquee, MarqueeItem, Flexbox, FlexboxItem, XImg}
 })
@@ -44,21 +41,21 @@ export default class LHeader extends Vue {
   imgWidth=screen.width
   index=0
   initImg=initImg
-
   @IndexState headerImages
   @IndexState focus
-
   indexChange (index) {
     this.index = index;
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
 .header{
     background-image: linear-gradient(0deg, #FFFFFF 27%, #4386F4 100%);
     width: 100%;
+    .swiper-image {
+      height: 100%;
+      border: none;
+    }
     .avatar-container{
       display:flex;
       justify-content:center;

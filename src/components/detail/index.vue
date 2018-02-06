@@ -127,7 +127,7 @@ export default class Detail extends Vue {
     align-items: center;
     justify-content: center;
     border-radius: 0 !important;
-    line-height: initial !important;
+    line-height: 0.5rem !important;
   }
   .detail-foot {
     background: #ffffff;

@@ -76,8 +76,8 @@ export default class Money extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: initial !important;
     text-align: center;
+    line-height: 0.3rem !important;
   }
   .my-img {
     position: absolute;

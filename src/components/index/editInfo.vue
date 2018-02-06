@@ -81,7 +81,7 @@ export default class EditInfo extends Vue {
     .weui-btn {
       border-radius: 0 !important;
     }
-    .weui-btn::before {
+    .weui-btn::after {
       content: initial;
     }
     .img-box {

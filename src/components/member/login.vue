@@ -130,6 +130,7 @@ export default class Login extends Vue {
     align-items: center;
     justify-content: center;
     text-align: center;
+    line-height: 0.42rem !important;
   }
   background: #ffffff;
   height: 100%;
