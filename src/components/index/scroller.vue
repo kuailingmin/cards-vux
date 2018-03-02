@@ -1,5 +1,5 @@
 <template>
-  <div class="scroller" :style="{backgroundImage}">
+  <div class="scroller">
     <a class="list-top">
         <label class="text bold">{{title}}</label>
         <span class="app-icon" @click="$router.push('/cardList')">&#xe61e;</span>
@@ -27,9 +27,6 @@ export default class LScroller extends Vue {
   title;
   @Prop([Array])
   list;
-  backgroundImage = `linear-gradient(-29deg, ${
-    this.color === 'blue' ? '#0F4AB0' : '#D51717'
-  } 0%, ${this.color === 'blue' ? '#34D4F1' : '#F1D134'} 100%)`;
 }
 </script>
 <style lang="less" scoped>

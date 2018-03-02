@@ -56,7 +56,6 @@ export default class LHeader extends Vue {
       height: 100%;
       border: none;
       width: 100%;
-      border-radius: 0.1rem;
     }
     .avatar-container{
       display:flex;

@@ -24,7 +24,7 @@
             </flexbox-item>
         </flexbox>
       </div>
-      <l-scroller v-show="scrollers.is_show==='1'" v-for="(scroller, index) in scrollers.block_content" :key="index" color="blue" :title="scroller.title" :list="scroller.card_list"></l-scroller>
+      <l-scroller :style="{'background':`linear-gradient(to right,${scroller.color_start},${scroller.color_end})`}" v-show="scrollers.is_show==='1'" v-for="(scroller, index) in scrollers.block_content" :key="index" color="blue" :title="scroller.title" :list="scroller.card_list"></l-scroller>
       <div v-show="recommend.is_show==='1'" class="block">
         <p class="recommend-title">{{recommend.block_content.title}}</p>
         <grid :cols="2">
