@@ -87,7 +87,8 @@ export default class Detail extends Vue {
       } else {
         const params = {
           'num': this.count,
-          'shop_id': this.shopDetails.id
+          'shop_id': this.shopDetails.id,
+          'type': '2'
         };
         this.addReduce(params).then(msg => {
           if (msg) {
