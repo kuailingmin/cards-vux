@@ -58,7 +58,6 @@ export default class Money extends Vue {
   init () {
     const params = {};
     this.getInfo(params).then(msg => {
-      console.log(msg);
       if (msg) {
         this.$vux.toast.text(msg, 'middle');
       } else {

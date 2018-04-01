@@ -131,6 +131,7 @@ export default class App extends Vue {
       } else {
         localStorage.setItem('storeName', this.getIndexInfo.store_name);
         localStorage.setItem('bgImgUrl', this.getIndexInfo.store_logo_url);
+        localStorage.setItem('kfPhone', this.getIndexInfo.kf_phone);
         document.title = localStorage.getItem('storeName');
         this.setColor = this.getIndexInfo.style_color;
         localStorage.setItem('setColor', this.setColor);
